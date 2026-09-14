@@ -1,0 +1,12 @@
+{
+  "id": "serviceorcastra",
+  "type": "mod",
+  "name": "Orcastra VM/Container",
+  "description": "FOSSGO Private Cloud (Orcastra / LXD) product type — provision, suspend, and manage VMs and containers.",
+  "icon_url": "icon.svg",
+  "version": "0.1.0",
+  "author": "FOSSGO",
+  "author_url": "https://fossgo.id/",
+  "license": "Apache-2.0",
+  "minimum_fossbilling_version": "0.8.0"
+}

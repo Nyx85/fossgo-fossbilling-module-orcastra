@@ -1,0 +1,123 @@
+{# Product config for type orcastra. Defaults are placeholders — paste oak_/oas_ keys in the UI only. #}
+{% set config = product.config|default({}) %}
+{% set defaults = {
+  api_hostname: 'orcastra.orca.id',
+  api_key_id: '',
+  api_key_secret: '',
+  cluster_id: 'central-1',
+  project: 'default',
+  instance_type: 'virtual-machine',
+  image: 'ubuntu:24.04',
+  cpu: '2',
+  memory: '2GB',
+  disk: '20GB',
+  storage_pool: 'nvme',
+  profiles: 'default',
+  network: '',
+  dashboard_base: 'https://orcastra.orca.id',
+  tenant_org: ''
+} %}
+
+<div class="card-body">
+    <div class="mb-3">
+        <h3 class="card-title mb-1">{{ 'Orcastra Settings'|trans }}</h3>
+        <p class="text-secondary mb-0">{{ 'API credentials and LXD placement for this product. Keys are stored in FOSSBilling product config (encrypted at rest by the platform) — do not put secrets in git.'|trans }}</p>
+    </div>
+
+    <form method="post" action="{{ 'product/update_config'|api_url }}" {{ fb_api_form({message: 'Orcastra Settings Updated'|trans, reload: true}) }}>
+        <div class="mb-5">
+            <h4 class="mb-3">{{ 'API credentials'|trans }}</h4>
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'API hostname'|trans }}</label>
+                    <input class="form-control" type="text" name="config[api_hostname]" value="{{ config.api_hostname|default(defaults.api_hostname) }}" placeholder="orcastra.orca.id">
+                    <div class="form-hint">{{ 'Host without scheme; https:// is prepended.'|trans }}</div>
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'API key ID'|trans }}</label>
+                    <input class="form-control" type="text" name="config[api_key_id]" value="{{ config.api_key_id|default('') }}" placeholder="oak_…">
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'API key secret'|trans }}</label>
+                    <input class="form-control" type="password" name="config[api_key_secret]" value="{{ config.api_key_secret|default('') }}" placeholder="oas_…" autocomplete="new-password">
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'Dashboard base URL'|trans }}</label>
+                    <input class="form-control" type="text" name="config[dashboard_base]" value="{{ config.dashboard_base|default(defaults.dashboard_base) }}">
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="mb-5">
+            <h4 class="mb-3">{{ 'Instance defaults'|trans }}</h4>
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'Cluster ID'|trans }}</label>
+                    <input class="form-control" type="text" name="config[cluster_id]" value="{{ config.cluster_id|default(defaults.cluster_id) }}" placeholder="central-1">
+                    <div class="form-hint">{{ 'Known Mini clusters: central-1, central-2'|trans }}</div>
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'LXD project'|trans }}</label>
+                    <input class="form-control" type="text" name="config[project]" value="{{ config.project|default(defaults.project) }}">
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'Instance type'|trans }}</label>
+                    <select class="form-select" name="config[instance_type]">
+                        {% set itype = config.instance_type|default(defaults.instance_type) %}
+                        <option value="virtual-machine"{% if itype == 'virtual-machine' %} selected{% endif %}>virtual-machine</option>
+                        <option value="container"{% if itype == 'container' %} selected{% endif %}>container</option>
+                    </select>
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'Image / OS'|trans }}</label>
+                    <input class="form-control" type="text" name="config[image]" value="{{ config.image|default(defaults.image) }}" placeholder="ubuntu:24.04">
+                </div>
+                <div class="col-lg-4">
+                    <label class="form-label">{{ 'CPU'|trans }}</label>
+                    <input class="form-control" type="text" name="config[cpu]" value="{{ config.cpu|default(defaults.cpu) }}">
+                </div>
+                <div class="col-lg-4">
+                    <label class="form-label">{{ 'Memory'|trans }}</label>
+                    <input class="form-control" type="text" name="config[memory]" value="{{ config.memory|default(defaults.memory) }}">
+                </div>
+                <div class="col-lg-4">
+                    <label class="form-label">{{ 'Disk'|trans }}</label>
+                    <input class="form-control" type="text" name="config[disk]" value="{{ config.disk|default(defaults.disk) }}">
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'Storage pool'|trans }}</label>
+                    <input class="form-control" type="text" name="config[storage_pool]" value="{{ config.storage_pool|default(defaults.storage_pool) }}">
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'Profiles (comma-separated)'|trans }}</label>
+                    <input class="form-control" type="text" name="config[profiles]" value="{{ config.profiles|default(defaults.profiles) }}">
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'Network (optional)'|trans }}</label>
+                    <input class="form-control" type="text" name="config[network]" value="{{ config.network|default('') }}">
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-label">{{ 'Tenant organization ID (optional)'|trans }}</label>
+                    <input class="form-control" type="text" name="config[tenant_org]" value="{{ config.tenant_org|default('') }}">
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="id" value="{{ product.id }}">
+        <div class="d-flex justify-content-end gap-2">
+            <button class="btn btn-primary" type="submit">{{ 'Update'|trans }}</button>
+        </div>
+    </form>
+
+    <hr class="my-4" />
+
+    <form method="post" action="{{ 'serviceorcastra/test_connection'|api_url }}" {{ fb_api_form({message: 'Connection OK'|trans}) }}>
+        <p class="text-secondary">{{ 'Tests whoami/validate with the values currently saved on this product (re-save first if you just edited the form).'|trans }}</p>
+        <input type="hidden" name="api_hostname" value="{{ config.api_hostname|default(defaults.api_hostname) }}">
+        <input type="hidden" name="api_key_id" value="{{ config.api_key_id|default('') }}">
+        <input type="hidden" name="api_key_secret" value="{{ config.api_key_secret|default('') }}">
+        <button class="btn btn-outline-secondary" type="submit">{{ 'Test connection'|trans }}</button>
+    </form>
+</div>

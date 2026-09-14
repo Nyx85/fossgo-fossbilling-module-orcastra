@@ -1,0 +1,66 @@
+{% set service = admin.serviceorcastra_get({ order_id: order.id }) %}
+
+<div class="card-body">
+    <div class="mb-3">
+        <h3 class="card-title mb-1">{{ order.title }} — {{ 'Orcastra'|trans }}</h3>
+        <p class="text-secondary mb-0">{{ 'Runtime instance fields and power controls.'|trans }}</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><strong>{{ 'Instance'|trans }}</strong><div>{{ service.instance_name|default('—') }}</div></div>
+        <div class="col-md-4"><strong>{{ 'Cluster'|trans }}</strong><div>{{ service.cluster_id|default('—') }}</div></div>
+        <div class="col-md-4"><strong>{{ 'Project'|trans }}</strong><div>{{ service.project|default('default') }}</div></div>
+        <div class="col-md-4"><strong>{{ 'Type'|trans }}</strong><div>{{ service.instance_type|default('—') }}</div></div>
+        <div class="col-md-4"><strong>{{ 'Status'|trans }}</strong><div>{{ service.status|default('—') }}</div></div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <form method="post" action="{{ 'serviceorcastra/start'|api_url }}" {{ fb_api_form({message: 'Started'|trans, reload: true}) }}>
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+            <button class="btn btn-success btn-sm" type="submit">{{ 'Start'|trans }}</button>
+        </form>
+        <form method="post" action="{{ 'serviceorcastra/stop'|api_url }}" {{ fb_api_form({message: 'Stopped'|trans, reload: true}) }}>
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+            <button class="btn btn-warning btn-sm" type="submit">{{ 'Stop'|trans }}</button>
+        </form>
+        <form method="post" action="{{ 'serviceorcastra/restart'|api_url }}" {{ fb_api_form({message: 'Restarted'|trans, reload: true}) }}>
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+            <button class="btn btn-secondary btn-sm" type="submit">{{ 'Restart'|trans }}</button>
+        </form>
+        <a class="btn btn-outline-primary btn-sm" href="{{ 'serviceorcastra/console_url'|api_url(query: { order_id: order.id }) }}" {{ fb_api_link({callback: 'onOrcastraRedirect'}) }}>{{ 'Console'|trans }}</a>
+        <a class="btn btn-outline-primary btn-sm" href="{{ 'serviceorcastra/terminal_url'|api_url(query: { order_id: order.id }) }}" {{ fb_api_link({callback: 'onOrcastraRedirect'}) }}>{{ 'Terminal'|trans }}</a>
+    </div>
+
+    <script>
+    window.onOrcastraRedirect = function (result) {
+        if (result && result.redirect_url) {
+            window.open(result.redirect_url, '_blank', 'noopener');
+        }
+    };
+    </script>
+
+    <form method="post" action="{{ 'serviceorcastra/update'|api_url }}" {{ fb_api_form({message: 'Service Updated'|trans, reload: true}) }}>
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <label class="form-label">instance_name</label>
+                <input class="form-control" type="text" name="config[instance_name]" value="{{ service.instance_name|default('') }}">
+            </div>
+            <div class="col-lg-6">
+                <label class="form-label">cluster_id</label>
+                <input class="form-control" type="text" name="config[cluster_id]" value="{{ service.cluster_id|default('') }}">
+            </div>
+            <div class="col-lg-6">
+                <label class="form-label">project</label>
+                <input class="form-control" type="text" name="config[project]" value="{{ service.project|default('default') }}">
+            </div>
+            <div class="col-lg-6">
+                <label class="form-label">status</label>
+                <input class="form-control" type="text" name="config[status]" value="{{ service.status|default('') }}">
+            </div>
+        </div>
+        <input type="hidden" name="order_id" value="{{ order.id }}">
+        <div class="d-flex justify-content-end mt-4">
+            <button class="btn btn-primary" type="submit">{{ 'Update'|trans }}</button>
+        </div>
+    </form>
+</div>
