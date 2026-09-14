@@ -1,0 +1,9 @@
+{% if product.stock_control %}
+<div class="row g-3">
+    <div class="col-lg-6">
+        <label class="form-label">{{ 'Quantity'|trans }}</label>
+        <input class="form-control" type="text" name="quantity" value="1">
+    </div>
+</div>
+{% endif %}
+<p class="text-secondary mb-0">{{ 'Orcastra VM/container will be provisioned on the cluster configured for this product after payment/activation.'|trans }}</p>

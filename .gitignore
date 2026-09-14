@@ -1,0 +1,9 @@
+_fb_ref/
+reference/whmcs-orcastra/lib/cache/
+*.log
+.DS_Store
+
+# local secrets
+*.secret.json
+orcastra-fossbilling.json
+_fb_ref/
